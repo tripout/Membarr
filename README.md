@@ -1,6 +1,6 @@
 [![Discord](https://img.shields.io/discord/869287648487936040?color=7289DA&label=Discord&style=for-the-badge&logo=discord)](https://discord.gg/mYbCgtDTrh)
-[![DockerHub](https://img.shields.io/badge/Docker-Hub-%23099cec?style=for-the-badge&logo=docker)](https://hub.docker.com/r/piratify/invitarr)
-![Docker Pulls](https://img.shields.io/docker/pulls/piratify/invitarr?color=099cec&style=for-the-badge)
+[![DockerHub](https://img.shields.io/badge/Docker-Hub-%23099cec?style=for-the-badge&logo=docker)](https://hub.docker.com/r/yoruio/invitarr)
+![Docker Pulls](https://img.shields.io/docker/pulls/yoruio/invitarr?color=099cec&style=for-the-badge)
 
 Invitarr 
 =================
@@ -61,7 +61,7 @@ python3 Run.py
 
 1. First pull the image 
 ```
-docker pull piratify/invitarr:latest
+docker pull yoruio/invitarr:latest
 ```
 2. Make the container 
 ```
