@@ -19,6 +19,8 @@ PLEXPASS = ""
 PLEX_SERVER_NAME = ""
 Plex_LIBS = None
 
+USE_PLEX = False
+
 if(path.exists('app/config/config.ini')):
     try:
         config = configparser.ConfigParser()
@@ -38,14 +40,14 @@ if(path.exists('app/config/config.ini')):
         Plex_LIBS = config.get(BOT_SECTION, 'plex_libs')
     except:
         pass
-
-try:
-    account = MyPlexAccount(PLEXUSER, PLEXPASS)
-    plex = account.resource(PLEX_SERVER_NAME).connect()  # returns a PlexServer instance
-    print('Logged into plex!')
-except Exception as e:
-    print('Error with plex login. Please check username and password and Plex server name or setup plex in the bot.')
-    print(f'Error: {e}')
+if USE_PLEX:
+    try:
+        account = MyPlexAccount(PLEXUSER, PLEXPASS)
+        plex = account.resource(PLEX_SERVER_NAME).connect()  # returns a PlexServer instance
+        print('Logged into plex!')
+    except Exception as e:
+        print('Error with plex login. Please check username and password and Plex server name or setup plex in the bot.')
+        print(f'Error: {e}')
 
 if plex_roles is not None:
     plex_roles = list(plex_roles.split(','))
@@ -181,17 +183,23 @@ class app(commands.Cog):
     
     @commands.has_permissions(administrator=True)
     @commands.command()
-    async def dbadd(self, ctx, email, member: discord.Member):
+    async def dbadd(self, ctx, member: discord.Member, email, jellyfin_username):
+        email = email.strip()
+        jellyfin_username = jellyfin_username.strip()
+        await self.embedinfo(ctx.channel, f"username: {member.name} email: {email} jellyfin: {jellyfin_username}")
         #await self.addtoplex(email, ctx.channel)
-        if plexhelper.verifyemail(email):
-            try:
-                db.save_user(str(member.id), email)
-                await self.embedinfo(ctx.channel,'email and user were added to the database.')
-            except Exception as e:
-                await self.embedinfo(ctx.channel, 'There was an error adding this email address to database.')
-                print(e)
-        else:
-            await self.embederror(ctx.channel, 'Invalid email.')
+        
+        # Check email if provided
+        if email and not plexhelper.verifyemail(email):
+            await self.embederror(ctx.channel, "Invalid email.")
+            return
+
+        try:
+            db.save_user_all(str(member.id), email, jellyfin_username)
+            await self.embedinfo(ctx.channel,'User was added to the database.')
+        except Exception as e:
+            await self.embedinfo(ctx.channel, 'There was an error adding this user to database.')
+            print(e)
 
     @commands.has_permissions(administrator=True)
     @commands.command()
@@ -200,21 +208,23 @@ class app(commands.Cog):
         embed = discord.Embed(title='Invitarr Database.')
         all = db.read_useremail()
         table = texttable.Texttable()
-        table.set_cols_dtype(["t", "t", "t"])
-        table.set_cols_align(["c", "c", "c"])
-        header = ("#", "Name", "Email")
+        table.set_cols_dtype(["t", "t", "t", "t"])
+        table.set_cols_align(["c", "c", "c", "c"])
+        header = ("#", "Name", "Email", "Jellyfin")
         table.add_row(header)
+        print(all)
         for index, peoples in enumerate(all):
             index = index + 1
             id = int(peoples[1])
             dbuser = self.bot.get_user(id)
-            dbemail = peoples[2]
+            dbemail = peoples[2] if peoples[2] else "No Plex"
+            dbjellyfin = peoples[3] if peoples[3] else "No Jellyfin"
             try:
                 username = dbuser.name
             except:
                 username = "User Not Found."
-            embed.add_field(name=f"**{index}. {username}**", value=dbemail+'\n', inline=False)
-            table.add_row((index, username, dbemail))
+            embed.add_field(name=f"**{index}. {username}**", value=dbemail+'\n'+dbjellyfin+'\n', inline=False)
+            table.add_row((index, username, dbemail, dbjellyfin))
         
         total = str(len(all))
         if(len(all)>25):
@@ -226,12 +236,11 @@ class app(commands.Cog):
             await ctx.channel.send(embed = embed)
         
             
-
     @commands.has_permissions(administrator=True)
     @commands.command()
     async def dbrm(self, ctx, position):
         embed = discord.Embed(title='Invitarr Database.')
-        all = db.read_useremail()
+        all = db.read_useremail()   # TODO: no need to read from DB or make a table here.
         table = texttable.Texttable()
         table.set_cols_dtype(["t", "t", "t"])
         table.set_cols_align(["c", "c", "c"])

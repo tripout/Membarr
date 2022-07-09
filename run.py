@@ -8,6 +8,8 @@ from app.bot.helper.confighelper import switch, Discord_bot_token, plex_roles
 import app.bot.helper.confighelper as confighelper
 maxroles = 10
 
+print(f"Discord Bot Token: {Discord_bot_token}")
+
 if plex_roles is None:
     plex_roles = []
 else:

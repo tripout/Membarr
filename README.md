@@ -24,7 +24,7 @@ This command is used to add an email to plex
 This command is used to remove an email from plex
 .dbls
 This command is used to list Invitarrs database
-.dbadd <email> <@user>
+.dbadd <@user> "<email>" "<jellyfinUsername>"
 This command is used to add exsisting users email and discord id to the DB.
 .dbrm <position>
 This command is used to remove a record from the Db. Use -db ls to determine record position. ex: -db rm 1

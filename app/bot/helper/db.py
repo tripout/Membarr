@@ -29,22 +29,61 @@ conn = create_connection(DB_URL)
 if checkTableExists(conn, 'clients'):
 	print('Table exists.')
 else:
-    conn.execute('''
-    CREATE TABLE "clients" (
+    conn.execute(
+    '''CREATE TABLE "clients" (
     "id"	INTEGER NOT NULL UNIQUE,
     "discord_username"	TEXT NOT NULL UNIQUE,
-    "email"	TEXT NOT NULL,
+    "email"	TEXT,
+    "jellyfin_username" TEXT,
     PRIMARY KEY("id" AUTOINCREMENT)
-    );
-    ''')
+    );''')
 
-def save_user(username, email):
+def save_user_email(username, email):
     if username and email:
-        conn.execute("INSERT INTO clients (discord_username, email) VALUES ('"+ username +"', '" + email +  "')")
+        conn.execute(f"""
+            INSERT OR REPLACE INTO clients(discord.username, email)
+            VALUES('{username}', '{email}')
+        """)
         conn.commit()
         print("User added to db.")
     else:
-        return "Username or email cannot be empty"
+        return "Username and email cannot be empty"
+
+def save_user(username):
+    if username:
+        conn.execute("INSERT INTO clients (discord_username) VALUES ('"+ username +"')")
+        conn.commit()
+        print("User added to db.")
+    else:
+        return "Username cannot be empty"
+    
+def save_user_jellyfin(username, jellyfin_username):
+    if username and jellyfin_username:
+        conn.execute(f"""
+            INSERT OR REPLACE INTO clients(discord_username, jellyfin_username)
+            VALUES('{username}', '{jellyfin_username}')
+        """)
+        conn.commit()
+        print("User added to db.")
+    else:
+        return "Discord and Jellyfin usernames cannot be empty"
+
+def save_user_all(username, email, jellyfin_username):
+    if username and email and jellyfin_username:
+        conn.execute(f"""
+            INSERT OR REPLACE INTO clients(discord_username, email, jellyfin_username)
+            VALUES('{username}', '{email}', '{jellyfin_username}')
+        """)
+        conn.commit()
+        print("User added to db.")
+    elif username and email:
+        save_user_email(username, email)
+    elif username and jellyfin_username:
+        save_user_jellyfin(username, jellyfin_username)
+    elif username:
+        save_user(username)
+    else:
+        return "Discord username must all be provided"
 
 def get_useremail(username):
     if username:
@@ -60,6 +99,29 @@ def get_useremail(username):
             return "error in fetching from db"
     else:
         return "username cannot be empty"
+
+def get_jellyfin_username(username):
+    """
+    Get jellyfin username of user based on discord username
+
+    param   username: discord username
+
+    return  jellyfin username
+    """
+    if username:
+        try:
+            cursor = conn.execute('SELECT discord_username, jellyfin_username from clients where discord_username="{}";'.format(username))
+            for row in cursor:
+                jellyfin_username = row[1]
+            if jellyfin_username:
+                return jellyfin_username
+            else:
+                return "No users found"
+        except:
+            return "error in fetching from db"
+    else:
+        return "username cannot be empty"
+
 
 def delete_user(username):
     if username:
