@@ -94,7 +94,7 @@ def get_useremail(username):
             if email:
                 return email
             else:
-                return "No users found"
+                return "No email found"
         except:
             return "error in fetching from db"
     else:
@@ -121,6 +121,32 @@ def get_jellyfin_username(username):
             return "error in fetching from db"
     else:
         return "username cannot be empty"
+
+def remove_email(username):
+    """
+    Sets email of discord user to null in database
+    """
+    if username:
+        conn.execute(f"UPDATE clients SET email = null WHERE discord_username = '{username}'")
+        conn.commit()
+        print(f"Email removed from user {username} in database")
+        return True
+    else:
+        print(f"Username cannot be empty.")
+        return False
+
+def remove_jellyfin(username):
+    """
+    Sets jellyfin username of discord user to null in database
+    """
+    if username:
+        conn.execute(f"UPDATE clients SET jellyfin_username = null WHERE discord_username = '{username}'")
+        conn.commit()
+        print(f"Jellyfin username removed from user {username} in database")
+        return True
+    else:
+        print(f"Username cannot be empty.")
+        return False
 
 
 def delete_user(username):

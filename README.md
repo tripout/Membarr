@@ -18,10 +18,14 @@ Invitarr is a chatbot that invites discord users to plex. You can also automate 
 Commands: 
 
 ```
-.plexinvite <email>
+.plexinvite / .plexadd <email>
 This command is used to add an email to plex
-.plexremove <email>
+.plexremove / .plexrm <email>
 This command is used to remove an email from plex
+.jellyfininvite / .jellyadd <username>
+This command is used to add a user to Jellyfin.
+.jellyremove / .jellyrm <username>
+This command is used to remove a user from Jellyfin.
 .dbls
 This command is used to list Invitarrs database
 .dbadd <@user> "<email>" "<jellyfinUsername>"
@@ -66,7 +70,7 @@ docker run -d --restart unless-stopped --name invitarr -v /path to config:/app/a
 
 # After bot has started 
 
-# Setup Commands: 
+# Plex Setup Commands: 
 
 ```
 .setupplex
@@ -74,7 +78,21 @@ This command is used to setup plex login.
 .plexroleadd <@role>
 These role(s) will be used as the role(s) to automatically invite user to plex
 .setupplexlibs (optional)
-This command is used to setup plex libraries. Default is set to all. 
+This command is used to setup plex libraries. Default is set to all.
+.plexdisable
+This command disables the Plex integration (currently only disables auto-add / auto-remove)
+```
+
+# Jellyfin Setup Commands:
+```
+.setupjelly
+This command is used to setup Jellyfin API.
+.jellyroleadd <@role>
+These role(s) will be used as the role(s) to automatically invite user to Jellyfin
+.setupjellylibs (optional)
+This command is used to setup jelly libraries. Default is set to all. 
+.jellydisable
+this command disables the Jellyfin integration (currently only disables auto-add / auto-remove)
 ```
 
 Refer to the [Wiki](https://github.com/Sleepingpirates/Invitarr/wiki) for detailed steps.
