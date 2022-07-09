@@ -7,12 +7,12 @@ BOT_SECTION = 'bot_envs'
 config = configparser.ConfigParser()
 
 CONFIG_KEYS = ['username', 'password', 'discord_bot_token', 'plex_user', 'plex_pass',
-                'roles', 'plex_server_name', 'plex_libs', 'owner_id', 'channel_id',
+                'plex_roles', 'plex_server_name', 'plex_libs', 'owner_id', 'channel_id',
                 'auto_remove_user']
 
 # settings
 Discord_bot_token = ""
-roles = None
+plex_roles = None
 PLEXUSER = ""
 PLEXPASS = ""
 PLEX_SERVER_NAME = ""
@@ -48,7 +48,7 @@ if(path.exists('app/config/config.ini')):
 
 if(path.exists('app/config/config.ini')):
     try:
-        roles = config.get(BOT_SECTION, 'roles')
+        roles = config.get(BOT_SECTION, 'plex_roles')
     except:
         pass
 if(path.exists('app/config/config.ini')):

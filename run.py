@@ -4,14 +4,14 @@ from discord.ext import commands, tasks
 from discord.utils import get
 import asyncio
 import sys
-from app.bot.helper.confighelper import switch, Discord_bot_token, roles
+from app.bot.helper.confighelper import switch, Discord_bot_token, plex_roles
 import app.bot.helper.confighelper as confighelper
 maxroles = 10
 
-if roles is None:
-    roles = []
+if plex_roles is None:
+    plex_roles = []
 else:
-    roles = list(roles.split(','))
+    plex_roles = list(plex_roles.split(','))
 
 if switch == 0:
     print("Missing Config.")
@@ -41,27 +41,27 @@ def reload():
     bot.reload_extension(f'app.bot.cogs.app')
 
 async def getplex(ctx, type):
-    username = None
+    value = None
     await ctx.author.send("Please reply with your Plex {}:".format(type))
-    while(username == None):
+    while(value == None):
         def check(m):
             return m.author == ctx.author and not m.guild
         try:
-            username = await bot.wait_for('message', timeout=200, check=check)
-            return username.content
+            value = await bot.wait_for('message', timeout=200, check=check)
+            return value.content
         except asyncio.TimeoutError:
             message = "Timed Out. Try again."
             return None
 
 @bot.command()           
 @commands.has_permissions(administrator=True)
-async def roleadd(ctx, role: discord.Role):
-    if len(roles) <= maxroles:
-        roles.append(role.name)
-        saveroles = ",".join(roles)
-        confighelper.change_config("roles", saveroles)
-        await ctx.author.send("Updated roles. Bot is restarting. Please wait.")
-        print("Roles updated. Restarting bot.")
+async def plexroleadd(ctx, role: discord.Role):
+    if len(plex_roles) <= maxroles:
+        plex_roles.append(role.name)
+        saveroles = ",".join(plex_roles)
+        confighelper.change_config("plex_roles", saveroles)
+        await ctx.author.send("Updated Plex roles. Bot is restarting. Please wait.")
+        print("Plex roles updated. Restarting bot.")
         reload()
         await ctx.author.send("Bot has been restarted. Give it a few seconds.")
         print("Bot has been restarted. Give it a few seconds.")
@@ -95,7 +95,7 @@ async def setupplex(ctx):
 
 @bot.command()
 @commands.has_permissions(administrator=True)
-async def setuplibs(ctx):
+async def setupplexlibs(ctx):
     libs = ""
     libs = await getplex(ctx, "libs")
     if libs is None:

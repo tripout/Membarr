@@ -71,9 +71,9 @@ docker run -d --restart unless-stopped --name invitarr -v /path to config:/app/a
 ```
 .setupplex
 This command is used to setup plex login. 
-.roleadd <@role>
+.plexroleadd <@role>
 These role(s) will be used as the role(s) to automatically invite user to plex
-.setuplibs (optional)
+.setupplexlibs (optional)
 This command is used to setup plex libraries. Default is set to all. 
 ```
 

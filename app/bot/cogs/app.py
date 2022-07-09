@@ -13,7 +13,7 @@ CONFIG_PATH = 'app/config/config.ini'
 BOT_SECTION = 'bot_envs'
 
 # settings
-roles = None
+plex_roles = None
 PLEXUSER = ""
 PLEXPASS = ""
 PLEX_SERVER_NAME = ""
@@ -30,7 +30,7 @@ if(path.exists('app/config/config.ini')):
         pass
 if(path.exists('app/config/config.ini')):
     try:
-        roles = config.get(BOT_SECTION, 'roles')
+        plex_roles = config.get(BOT_SECTION, 'plex_roles')
     except:
         pass
 if(path.exists('app/config/config.ini')):
@@ -43,11 +43,12 @@ try:
     account = MyPlexAccount(PLEXUSER, PLEXPASS)
     plex = account.resource(PLEX_SERVER_NAME).connect()  # returns a PlexServer instance
     print('Logged into plex!')
-except:
+except Exception as e:
     print('Error with plex login. Please check username and password and Plex server name or setup plex in the bot.')
+    print(f'Error: {e}')
 
-if roles is not None:
-    roles = list(roles.split(','))
+if plex_roles is not None:
+    plex_roles = list(plex_roles.split(','))
 
 if Plex_LIBS is None:
     Plex_LIBS = ["all"]
@@ -64,8 +65,8 @@ class app(commands.Cog):
         print('Made by Sleepingpirate https://github.com/Sleepingpirates/')
         print(f'Logged in as {self.bot.user} (ID: {self.bot.user.id})')
         print('------')
-        if roles is None:
-            print('Configure roles to enable auto invite after a role is assigned.')
+        if plex_roles is None:
+            print('Configure Plex roles to enable auto invite to Plex after a role is assigned.')
     
     async def embederror(self, author, message):
         embed1 = discord.Embed(title="ERROR",description=message, color=0xf50000)
@@ -123,11 +124,11 @@ class app(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
-        if roles is None:
+        if plex_roles is None:
             return
         roles_in_guild = after.guild.roles
         role = None
-        for role_for_app in roles:
+        for role_for_app in plex_roles:
             for role_in_guild in roles_in_guild:
                 if role_in_guild.name == role_for_app:
                     role = role_in_guild
