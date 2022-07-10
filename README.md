@@ -66,7 +66,7 @@ docker pull yoruio/invitarr:latest
 ```
 2. Make the container 
 ```
-docker run -d --restart unless-stopped --name invitarr -v /path to config:/app/app/config -e "token=YOUR_DISCORD_TOKEN_HERE" piratify/invitarr:latest
+docker run -d --restart unless-stopped --name invitarr -v /path to config:/app/app/config -e "token=YOUR_DISCORD_TOKEN_HERE" yoruio/invitarr:latest
 ```
 
 # After bot has started 
