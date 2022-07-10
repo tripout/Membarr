@@ -24,7 +24,7 @@ This command is used to add an email to plex
 This command is used to remove an email from plex
 .jellyfininvite / .jellyadd <username>
 This command is used to add a user to Jellyfin.
-.jellyremove / .jellyrm <username>
+.jellyfinremove / .jellyrm <username>
 This command is used to remove a user from Jellyfin.
 .dbls
 This command is used to list Invitarrs database
@@ -39,9 +39,10 @@ This command is used to remove a record from the Db. Use -db ls to determine rec
 1. Ensure you have the Community Applications plugin installed.
 2. Inside the Community Applications app store, search for Invitarr.
 3. Click the Install Button.
-4. On the following Add Container screen, add discord bot token.
-5. Click apply
-6. Finish setting up using [Setup Commands](#after-bot-has-started)
+4. On the following Add Container screen, Change repository to yoruio/invitarr:latest
+4. Add discord bot token.
+6. Click apply
+7. Finish setting up using [Setup Commands](#after-bot-has-started)
 
 # Setup 
 
