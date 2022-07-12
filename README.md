@@ -18,20 +18,20 @@ Membarr is a fork of Invitarr that invites discord users to Plex and Jellyfin. Y
 Commands: 
 
 ```
-.plexinvite / .plexadd <email>
+/plex invite <email>
 This command is used to add an email to plex
-.plexremove / .plexrm <email>
+/plex remove <email>
 This command is used to remove an email from plex
-.jellyfininvite / .jellyadd <username>
+/jellyfin invite <jellyfin username>
 This command is used to add a user to Jellyfin.
-.jellyfinremove / .jellyrm <username>
+/jellyfin remove <jellyfin username>
 This command is used to remove a user from Jellyfin.
-.dbls
-This command is used to list Invitarrs database
-.dbadd <@user> "<email>" "<jellyfinUsername>"
-This command is used to add exsisting users email and discord id to the DB.
-.dbrm <position>
-This command is used to remove a record from the Db. Use -db ls to determine record position. ex: -db rm 1
+/membarr dbls
+This command is used to list Membarr's database
+/membarr dbadd <@user> <optional: plex email> <optional: jellyfin username>
+This command is used to add exsisting  plex emails, jellyfin users and discord id to the DB.
+/membarr dbrm <position>
+This command is used to remove a record from the Db. Use /membarr dbls to determine record position. ex: /membarr dbrm 1
 ```
 
 # Unraid Installation 
@@ -74,26 +74,34 @@ docker run -d --restart unless-stopped --name invitarr -v /path to config:/app/a
 # Plex Setup Commands: 
 
 ```
-.setupplex
+/plexsettings setup <username> <password> <server name>
 This command is used to setup plex login. 
-.plexroleadd <@role>
+/plexsettings addrole <@role>
 These role(s) will be used as the role(s) to automatically invite user to plex
-.setupplexlibs (optional)
-This command is used to setup plex libraries. Default is set to all.
-.plexdisable
+/plexsettings removerole <@role>
+This command is used to remove a role that is being used to automatically invite uses to plex
+/plexsettings setuplibs <libraries>
+This command is used to setup plex libraries. Default is set to all. Libraries is a comma separated list.
+/plexsettings enable
+This command enables the Plex integration (currently only enables auto-add / auto-remove)
+/plexsettings disable
 This command disables the Plex integration (currently only disables auto-add / auto-remove)
 ```
 
 # Jellyfin Setup Commands:
 ```
-.setupjelly
-This command is used to setup Jellyfin API.
-.jellyroleadd <@role>
+/jellyfinsettings setup <server url> <api key>
+This command is used to setup the Jellyfin server 
+/jellyfinsettings addrole <@role>
 These role(s) will be used as the role(s) to automatically invite user to Jellyfin
-.setupjellylibs (optional)
-This command is used to setup jelly libraries. Default is set to all. 
-.jellydisable
-this command disables the Jellyfin integration (currently only disables auto-add / auto-remove)
+/jellyfinsettings removerole <@role>
+This command is used to remove a role that is being used to automatically invite uses to Jellyfin
+/jellyfinsettings setuplibs <libraries>
+This command is used to setup Jellyfin libraries. Default is set to all. Libraries is a comma separated list.
+/jellyfinsettings enable
+This command enables the Jellyfin integration (currently only enables auto-add / auto-remove)
+/jellyfinsettings disable
+This command disables the Jellyfin integration (currently only disables auto-add / auto-remove)
 ```
 
 Refer to the [Wiki](https://github.com/Sleepingpirates/Invitarr/wiki) for detailed steps.
