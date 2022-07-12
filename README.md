@@ -2,7 +2,7 @@
 [![DockerHub](https://img.shields.io/badge/Docker-Hub-%23099cec?style=for-the-badge&logo=docker)](https://hub.docker.com/r/yoruio/invitarr)
 ![Docker Pulls](https://img.shields.io/docker/pulls/yoruio/invitarr?color=099cec&style=for-the-badge)
 
-Invitarr 
+Membarr 
 =================
 
 Membarr is a fork of Invitarr that invites discord users to Plex and Jellyfin. You can also automate this bot to invite discord users to a media server once a certain role is given to a user or the user can also be added manually.  
