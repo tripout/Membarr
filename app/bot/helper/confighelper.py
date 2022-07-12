@@ -133,12 +133,6 @@ if(path.exists(CONFIG_PATH)):
     except:
         print("Could not find previously synced version. Setting synced to false.")
         synced = False
-    
-    try:
-        GUILD_ID = config.get(BOT_SECTION, "guild")
-    except:
-        print("Could not get guild. Defaulting to global. Command syncing may take up to 24 hours to complete.")
-        GUILD_ID = None
 
 def get_config():
     """
