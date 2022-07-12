@@ -26,7 +26,7 @@ if USE_PLEX and plex_configured:
         print('Logged into plex!')
     except Exception as e:
         # probably rate limited.
-        print('Error with plex login. Please check username and password and Plex server name or setup plex in the bot.')
+        print('Error with plex login. Please check username and password and Plex server name or setup plex in the bot. If you have restarted the bot multiple times recently, this is most likely due to being ratelimited on the Plex API. Try again in 10 minutes.')
         print(f'Error: {e}')
 else:
     print(f"Plex {'disabled' if not USE_PLEX else 'not configured'}. Skipping Plex login.")
@@ -48,8 +48,12 @@ class app(commands.Cog):
         print('Named by lordfransie')
         print(f'Logged in as {self.bot.user} (ID: {self.bot.user.id})')
         print('------')
+
+        # TODO: Make these debug statements work. roles are currently empty arrays if no roles assigned.
         if plex_roles is None:
             print('Configure Plex roles to enable auto invite to Plex after a role is assigned.')
+        if jellyfin_roles is None:
+            print('Configure Jellyfin roles to enable auto invite to Jellyfin after a role is assigned.')
     
     async def getemail(self, after):
         email = None
@@ -148,7 +152,6 @@ class app(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
-        print(type(after))
         if plex_roles is None and jellyfin_roles is None:
             return
         roles_in_guild = after.guild.roles
@@ -213,8 +216,6 @@ class app(commands.Cog):
                         username = await self.getusername(after)
                         print("Username retrieved from user")
                         if username is not None:
-                            after.send("BREAKPOINT")
-                            print("BREAKPOINT")
                             await embedinfo(after, "Got it we will be creating your Jellyfin account shortly!")
                             password = jelly.generate_password(16)
                             if jelly.add_user(JELLYFIN_SERVER_URL, JELLYFIN_API_KEY, username, password, jellyfin_libs):
@@ -310,7 +311,6 @@ class app(commands.Cog):
         table.set_cols_align(["c", "c", "c", "c"])
         header = ("#", "Name", "Email", "Jellyfin")
         table.add_row(header)
-        print(all)
         for index, peoples in enumerate(all):
             index = index + 1
             id = int(peoples[1])

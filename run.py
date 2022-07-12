@@ -13,8 +13,6 @@ import app.bot.helper.jellyfinhelper as jelly
 from app.bot.helper.message import *
 maxroles = 10
 
-print(f"Discord Bot Token: {Discord_bot_token}")
-
 if switch == 0:
     print("Missing Config.")
     sys.exit()
@@ -23,13 +21,13 @@ print(f"V {MEMBARR_VERSION}")
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
-        print("bot init")
+        print("Initializing Discord bot")
         intents = discord.Intents.default()
         intents.members = True
         super().__init__(command_prefix=".", intents=intents)
 
     async def on_ready(self):
-        print("bot is online.")
+        print("Bot is online.")
         for guild in self.guilds:
             print("Syncing commands to " + guild.name)
             self.tree.copy_global_to(guild=guild)
@@ -127,9 +125,7 @@ async def jellyroleadd(interaction: discord.Interaction, role: discord.Role):
             return
 
         jellyfin_roles.append(role.name)
-        print (f"new jellyfin roles: {jellyfin_roles}")
         saveroles = ",".join(jellyfin_roles)
-        print (f"saveroles: {saveroles}")
         confighelper.change_config("jellyfin_roles", saveroles)
         await interaction.response.send_message("Updated Jellyfin roles. Bot is restarting. Please wait a few seconds.", ephemeral=True)
         print("Jellyfin roles updated. Restarting bot.")
@@ -280,5 +276,4 @@ async def disablejellyfin(interaction: discord.Interaction):
 bot.tree.add_command(plex_commands)
 bot.tree.add_command(jellyfin_commands)
 
-print("running bot")
 bot.run(Discord_bot_token)
