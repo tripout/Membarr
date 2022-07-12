@@ -160,7 +160,7 @@ def delete_user(username):
     else:
         return "username cannot be empty"
 
-def read_useremail():
+def read_all():
     cur = conn.cursor()
     cur.execute("SELECT * FROM clients")
     rows = cur.fetchall()
