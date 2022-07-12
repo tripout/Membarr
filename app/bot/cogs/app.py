@@ -18,6 +18,83 @@ BOT_SECTION = 'bot_envs'
 plex_configured = True
 jellyfin_configured = True
 
+config = configparser.ConfigParser()
+config.read(CONFIG_PATH)
+
+# Get Plex config
+try:
+    PLEXUSER = config.get(BOT_SECTION, 'plex_user')
+    PLEXPASS = config.get(BOT_SECTION, 'plex_pass')
+    PLEX_SERVER_NAME = config.get(BOT_SECTION, 'plex_server_name')
+except:
+    print("Could not load plex config")
+    plex_configured = False
+
+# Get Plex roles config
+try:
+    plex_roles = config.get(BOT_SECTION, 'plex_roles')
+except:
+    plex_roles = None
+if plex_roles:
+    plex_roles = list(plex_roles.split(','))
+else:
+    plex_roles = []
+
+# Get Plex libs config
+try:
+    Plex_LIBS = config.get(BOT_SECTION, 'plex_libs')
+except:
+    Plex_LIBS = None
+if Plex_LIBS is None:
+    Plex_LIBS = ["all"]
+else:
+    Plex_LIBS = list(Plex_LIBS.split(','))
+    
+# Get Jellyfin config
+try:
+    JELLYFIN_SERVER_URL = config.get(BOT_SECTION, 'jellyfin_server_url')
+    JELLYFIN_API_KEY = config.get(BOT_SECTION, "jellyfin_api_key")
+except:
+    jellyfin_configured = False
+
+# Get Jellyfin roles config
+try:
+    jellyfin_roles = config.get(BOT_SECTION, 'jellyfin_roles')
+except:
+    jellyfin_roles = None
+if jellyfin_roles:
+    jellyfin_roles = list(jellyfin_roles.split(','))
+else:
+    jellyfin_roles = []
+
+# Get Jellyfin libs config
+try:
+    jellyfin_libs = config.get(BOT_SECTION, 'jellyfin_libs')
+except:
+    jellyfin_libs = None
+if jellyfin_libs is None:
+    jellyfin_libs = ["all"]
+else:
+    jellyfin_libs = list(jellyfin_libs.split(','))
+
+# Get Enable config
+try:
+    USE_JELLYFIN = config.get(BOT_SECTION, 'jellyfin_enabled')
+    USE_JELLYFIN = USE_JELLYFIN.lower() == "true"
+except:
+    USE_JELLYFIN = False
+
+try:
+    USE_PLEX = config.get(BOT_SECTION, "plex_enabled")
+    USE_PLEX = USE_PLEX.lower() == "true"
+except:
+    USE_PLEX = False
+
+try:
+    synced = not (float(config.get(BOT_SECTION, "sync_version")) < MEMBARR_VERSION)
+except:
+    synced = False
+
 if USE_PLEX and plex_configured:
     try:
         print("Connecting to Plex......")
@@ -252,37 +329,41 @@ class app(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        email = db.get_useremail(member.id)
-        plexhelper.plexremove(plex,email)
-        jellyfin_username = db.get_jellyfin_username(member.id)
-        jelly.remove_user(jellyfin_username)
+        if USE_PLEX and plex_configured:
+            email = db.get_useremail(member.id)
+            plexhelper.plexremove(plex,email)
+        
+        if USE_JELLYFIN and jellyfin_configured:
+            jellyfin_username = db.get_jellyfin_username(member.id)
+            jelly.remove_user(jellyfin_username)
+            
         deleted = db.delete_user(member.id)
         if deleted:
             print("Removed {} from db because user left discord server.".format(email))
 
-    @commands.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(administrator=True)
     @plex_commands.command(name="invite", description="Invite a user to Plex")
     async def plexinvite(self, interaction: discord.Interaction, email: str):
         await self.addtoplex(email, interaction.response)
     
-    @commands.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(administrator=True)
     @plex_commands.command(name="remove", description="Remove a user from Plex")
     async def plexremove(self, interaction: discord.Interaction, email: str):
         await self.removefromplex(email, interaction.response)
     
-    @commands.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(administrator=True)
     @jellyfin_commands.command(name="invite", description="Invite a user to Jellyfin")
     async def jellyfininvite(self, interaction: discord.Interaction, username: str):
         password = jelly.generate_password(16)
         if await self.addtojellyfin(username, password, interaction.response):
             await embedcustom(interaction.response, "Jellyfin user created!", {'Username': username, 'Password': f"||{password}||"})
 
-    @commands.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(administrator=True)
     @jellyfin_commands.command(name="remove", description="Remove a user from Jellyfin")
     async def jellyfinremove(self, interaction: discord.Interaction, username: str):
         await self.removefromjellyfin(username, interaction.response)
     
-    @commands.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(administrator=True)
     @membarr_commands.command(name="dbadd", description="Add a user to the Membarr database")
     async def dbadd(self, interaction: discord.Interaction, member: discord.Member, email: str = "", jellyfin_username: str = ""):
         email = email.strip()
@@ -300,7 +381,7 @@ class app(commands.Cog):
             await embedinfo(interaction.response, 'There was an error adding this user to database. Check Membarr logs for more info')
             print(e)
 
-    @commands.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(administrator=True)
     @membarr_commands.command(name="dbls", description="View Membarr database")
     async def dbls(self, interaction: discord.Interaction):
 
@@ -334,7 +415,7 @@ class app(commands.Cog):
             await interaction.response.send_message(embed = embed, ephemeral=True)
         
             
-    @commands.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(administrator=True)
     @membarr_commands.command(name="dbrm", description="Remove user from Membarr database")
     async def dbrm(self, interaction: discord.Interaction, position: int):
         embed = discord.Embed(title='Membarr Database.')
