@@ -36,6 +36,8 @@ class Bot(commands.Bot):
     async def on_guild_join(self, guild):
         print(f"Joined guild {guild.name}")
         print(f"Syncing commands to {guild.name}")
+        self.tree.copy_global_to(guild=guild)
+        await self.tree.sync(guild=guild)
     
     async def setup_hook(self):
         print("Loading media server connectors")
