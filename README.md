@@ -9,11 +9,10 @@ Membarr is a fork of Invitarr that invites discord users to Plex and Jellyfin. Y
 
 ### Features
 
-- Ability to invite users to plex from discord 
+- Ability to invite users to Plex and Jellyfin from discord 
 - Fully automatic invites using roles 
 - Ability to kick users from plex if they leave the discord server or if their role is taken away.
 - Ability to view the database in discord and to edit it.
-- Fully configurable via a web portal
 
 Commands: 
 
@@ -34,17 +33,20 @@ This command is used to add exsisting  plex emails, jellyfin users and discord i
 This command is used to remove a record from the Db. Use /membarr dbls to determine record position. ex: /membarr dbrm 1
 ```
 
-# Unraid Installation 
+# Unraid Installation
+> For Manual an Docker setup, see below
 
 1. Ensure you have the Community Applications plugin installed.
 2. Inside the Community Applications app store, search for Invitarr.
 3. Click the Install Button.
 4. On the following Add Container screen, Change repository to yoruio/invitarr:latest
-4. Add discord bot token.
+  > **Note**
+  > Membarr uses a slightly different client table than Invitarr, so existing app.db files will need to be deleted (this will also delete your users). See [Migration](#migration-from-invitarr) for migration info
+5. Add discord bot token.
 6. Click apply
 7. Finish setting up using [Setup Commands](#after-bot-has-started)
 
-# Setup 
+# Manual Setup (For Docker, see below)
 
 **1. Enter discord bot token in bot.env**
 
@@ -104,8 +106,11 @@ This command enables the Jellyfin integration (currently only enables auto-add /
 This command disables the Jellyfin integration (currently only disables auto-add / auto-remove)
 ```
 
-Refer to the [Wiki](https://github.com/Sleepingpirates/Invitarr/wiki) for detailed steps.
+# Migration from Invitarr
+Membarr uses a slightly different database table than Invitarr. To migrate users, you will need a sqlite database browser like DB Browser. Add a column to the sqlite table called "jellyfin_username", and make the "email" column nullable. Or, delete your existing app.db table and start fresh.
 
+# Other stuff
 **Enable Intents else bot will not Dm users after they get the role.**
 https://discordpy.readthedocs.io/en/latest/intents.html#privileged-intents
+**Discord Bot requires Bot and application.commands permission to fully function.**
 
