@@ -9,11 +9,10 @@ Membarr is a fork of Invitarr that invites discord users to Plex and Jellyfin. Y
 
 ### Features
 
-- Ability to invite users to plex from discord 
+- Ability to invite users to Plex and Jellyfin from discord 
 - Fully automatic invites using roles 
 - Ability to kick users from plex if they leave the discord server or if their role is taken away.
 - Ability to view the database in discord and to edit it.
-- Fully configurable via a web portal
 
 Commands: 
 
