@@ -41,7 +41,7 @@ else:
 def save_user_email(username, email):
     if username and email:
         conn.execute(f"""
-            INSERT OR REPLACE INTO clients(discord.username, email)
+            INSERT OR REPLACE INTO clients(discord_username, email)
             VALUES('{username}', '{email}')
         """)
         conn.commit()
