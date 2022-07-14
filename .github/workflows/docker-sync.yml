@@ -1,0 +1,68 @@
+# This is a basic workflow to help you get started with Actions
+
+name: docker-sync
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "master" branch
+  push:
+    branches: [ "master" ]
+  pull_request:
+    types:
+      - closed
+    branches: [ "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  Sync-Readme:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      
+      - uses: meeDamian/sync-readme@v1.0.6
+        with:
+          pass: ${{ secrets.DOCKER_PASS }}
+          description: true
+      
+      - uses: meeDamian/sync-readme@v1.0.6
+        with:
+          pass: ${{ secrets.DOCKER_PASS }}
+          slug: yoruio/invitarr
+          description: true   
+        
+  Push-Images:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      -
+        name: Build and push to membarr
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: yoruio/membarr:latest
+      -
+        name: Build and push to invitarr
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: yoruio/invitarr:latest
+     
