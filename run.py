@@ -11,13 +11,12 @@ from app.bot.helper.confighelper import MEMBARR_VERSION, switch, Discord_bot_tok
 import app.bot.helper.confighelper as confighelper
 import app.bot.helper.jellyfinhelper as jelly
 from app.bot.helper.message import *
+
 maxroles = 10
 
 if switch == 0:
     print("Missing Config.")
     sys.exit()
-
-print(f"V {MEMBARR_VERSION}")
 
 class Bot(commands.Bot):
     def __init__(self) -> None:

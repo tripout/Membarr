@@ -1,5 +1,6 @@
 from pickle import FALSE
 import app.bot.helper.jellyfinhelper as jelly
+from app.bot.helper.textformat import bcolors
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -27,7 +28,6 @@ try:
     PLEXPASS = config.get(BOT_SECTION, 'plex_pass')
     PLEX_SERVER_NAME = config.get(BOT_SECTION, 'plex_server_name')
 except:
-    print("Could not load plex config")
     plex_configured = False
 
 # Get Plex roles config
@@ -90,11 +90,6 @@ try:
 except:
     USE_PLEX = False
 
-try:
-    synced = not (float(config.get(BOT_SECTION, "sync_version")) < MEMBARR_VERSION)
-except:
-    synced = False
-
 if USE_PLEX and plex_configured:
     try:
         print("Connecting to Plex......")
@@ -120,9 +115,11 @@ class app(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Made by Yoruio https://github.com/Yoruio/')
-        print('Forked from Invitarr https://github.com/Sleepingpirates/Invitarr')
-        print('Named by lordfransie')
+        print('------')
+        print(bcolors.AUTHOR + "{:^41}".format(f"MEMBARR V {MEMBARR_VERSION}") + bcolors.ENDC)
+        print(f'{bcolors.AUTHOR}Made by Yoruio https://github.com/Yoruio/{bcolors.ENDC}')
+        print(f'Forked from Invitarr https://github.com/Sleepingpirates/Invitarr')
+        print(f'Named by lordfransie')
         print(f'Logged in as {self.bot.user} (ID: {self.bot.user.id})')
         print('------')
 

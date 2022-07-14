@@ -12,7 +12,7 @@ config = configparser.ConfigParser()
 CONFIG_KEYS = ['username', 'password', 'discord_bot_token', 'plex_user', 'plex_pass',
                 'plex_roles', 'plex_server_name', 'plex_libs', 'owner_id', 'channel_id',
                 'auto_remove_user', 'jellyfin_api_key', 'jellyfin_server_url', 'jellyfin_roles',
-                'jellyfin_libs', 'plex_enabled', 'jellyfin_enabled', 'sync_version']
+                'jellyfin_libs', 'plex_enabled', 'jellyfin_enabled']
 
 # settings
 Discord_bot_token = ""
@@ -132,12 +132,6 @@ try:
 except:
     print("Could not get Plex enable config. Defaulting to False")
     USE_PLEX = False
-
-try:
-    synced = not (float(config.get(BOT_SECTION, "sync_version")) < MEMBARR_VERSION)
-except:
-    print("Could not find previously synced version. Setting synced to false.")
-    synced = False
 
 def get_config():
     """
