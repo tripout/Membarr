@@ -335,7 +335,7 @@ class app(commands.Cog):
         
         if USE_JELLYFIN and jellyfin_configured:
             jellyfin_username = db.get_jellyfin_username(member.id)
-            jelly.remove_user(jellyfin_username)
+            jelly.remove_user(JELLYFIN_SERVER_URL, JELLYFIN_API_KEY, jellyfin_username)
             
         deleted = db.delete_user(member.id)
         if deleted:
