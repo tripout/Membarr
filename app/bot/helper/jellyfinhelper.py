@@ -164,12 +164,12 @@ def get_config(jellyfin_url, jellyfin_api_key):
     url = f"{jellyfin_url}/System/Configuration"
 
     querystring = {"api_key":jellyfin_api_key}
-    response = requests.request("GET", url, params=querystring)
+    response = requests.request("GET", url, params=querystring, timeout=5)
     return response.json()
 
 def get_status(jellyfin_url, jellyfin_api_key):
     url = f"{jellyfin_url}/System/Configuration"
 
     querystring = {"api_key":jellyfin_api_key}
-    response = requests.request("GET", url, params=querystring)
+    response = requests.request("GET", url, params=querystring, timeout=5)
     return response.status_code
