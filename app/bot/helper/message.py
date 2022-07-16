@@ -18,11 +18,11 @@ async def embedcustom(recipient, title, fields, ephemeral=True):
 async def send_info(recipient, message, ephemeral=True):
     if isinstance(recipient, discord.InteractionResponse):
         await recipient.send_message(message, ephemeral=ephemeral)
-    elif isinstance(recipient, discord.User) or isinstance(recipient, discord.member.Member):
+    elif isinstance(recipient, discord.User) or isinstance(recipient, discord.member.Member) or isinstance(recipient, discord.Webhook):
         await recipient.send(message)
 
 async def send_embed(recipient, embed, ephemeral=True):
-    if isinstance(recipient, discord.User) or isinstance(recipient, discord.member.Member):
+    if isinstance(recipient, discord.User) or isinstance(recipient, discord.member.Member) or isinstance(recipient, discord.Webhook):
         await recipient.send(embed=embed)
     elif isinstance(recipient, discord.InteractionResponse):
         await recipient.send_message(embed=embed, ephemeral = ephemeral)
