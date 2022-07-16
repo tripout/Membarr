@@ -11,13 +11,13 @@ from app.bot.helper.confighelper import MEMBARR_VERSION, switch, Discord_bot_tok
 import app.bot.helper.confighelper as confighelper
 import app.bot.helper.jellyfinhelper as jelly
 from app.bot.helper.message import *
+from requests import ConnectTimeout
+
 maxroles = 10
 
 if switch == 0:
     print("Missing Config.")
     sys.exit()
-
-print(f"V {MEMBARR_VERSION}")
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
@@ -154,7 +154,8 @@ async def jellyrolels(interaction: discord.Interaction):
 
 @jellyfin_commands.command(name="setup", description="Setup Jellyfin integration")
 @app_commands.checks.has_permissions(administrator=True)
-async def setupjelly(interaction: discord.Interaction, server_url: str, api_key: str):
+async def setupjelly(interaction: discord.Interaction, server_url: str, api_key: str, external_url: str = None):
+    await interaction.response.defer()
     # get rid of training slashes
     server_url = server_url.rstrip('/')
 
@@ -164,28 +165,36 @@ async def setupjelly(interaction: discord.Interaction, server_url: str, api_key:
             pass
         elif server_status == 401:
             # Unauthorized
-            await embederror(interaction.response, "API key provided is invalid")
+            await embederror(interaction.followup, "API key provided is invalid")
             return
         elif server_status == 403:
             # Forbidden
-            await embederror(interaction.response, "API key provided does not have permissions")
+            await embederror(interaction.followup, "API key provided does not have permissions")
             return
         elif server_status == 404:
             # page not found
-            await embederror(interaction.response, "Server endpoint provided was not found")
+            await embederror(interaction.followup, "Server endpoint provided was not found")
             return
         else:
-            await embederror(interaction.response, "Unknown error occurred while connecting to server. Check Membarr logs.")
+            await embederror(interaction.followup, "Unknown error occurred while connecting to Jellyfin. Check Membarr logs.")
+    except ConnectTimeout as e:
+        await embederror(interaction.followup, "Connection to server timed out. Check that Jellyfin is online and reachable.")
+        return
     except Exception as e:
         print("Exception while testing Jellyfin connection")
+        print(type(e).__name__)
         print(e)
-        await embederror(interaction.response, "Could not connect to server. Check logs for more details.")
+        await embederror(interaction.followup, "Unknown exception while connecting to Jellyfin. Check Membarr logs")
         return
     
     confighelper.change_config("jellyfin_server_url", str(server_url))
     confighelper.change_config("jellyfin_api_key", str(api_key))
+    if external_url is not None:
+        confighelper.change_config("jellyfin_external_url", str(external_url))
+    else:
+        confighelper.change_config("jellyfin_external_url", "")
     print("Jellyfin server URL and API key updated. Restarting bot.")
-    await interaction.response.send_message("Jellyfin server URL and API key updated. Restarting bot.", ephemeral=True)
+    await interaction.followup.send("Jellyfin server URL and API key updated. Restarting bot.", ephemeral=True)
     await reload()
     print("Bot has been restarted. Give it a few seconds.")
 

@@ -1,6 +1,9 @@
 import sqlite3
 
+from app.bot.helper.dbupdater import check_table_version, update_table
+
 DB_URL = 'app/config/app.db'
+DB_TABLE = 'clients'
 
 def create_connection(db_file):
     """ create a database connection to a SQLite database """
@@ -26,7 +29,7 @@ def checkTableExists(dbcon, tablename):
 conn = create_connection(DB_URL)
 
 # Checking if table exists
-if checkTableExists(conn, 'clients'):
+if checkTableExists(conn, DB_TABLE):
 	print('Table exists.')
 else:
     conn.execute(
@@ -37,6 +40,8 @@ else:
     "jellyfin_username" TEXT,
     PRIMARY KEY("id" AUTOINCREMENT)
     );''')
+
+update_table(conn, DB_TABLE)
 
 def save_user_email(username, email):
     if username and email:

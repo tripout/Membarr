@@ -41,8 +41,6 @@ This command is used to remove a record from the Db. Use /membarr dbls to determ
 2. Inside the Community Applications app store, search for Invitarr.
 3. Click the Install Button.
 4. On the following Add Container screen, Change repository to yoruio/invitarr:latest
-  > **Note**
-  > Membarr uses a slightly different client table than Invitarr, so existing app.db files will need to be deleted (this will also delete your users). See [Migration](#migration-from-invitarr) for migration info
 5. Add discord bot token.
 6. Click apply
 7. Finish setting up using [Setup Commands](#after-bot-has-started)
@@ -93,8 +91,8 @@ This command disables the Plex integration (currently only disables auto-add / a
 
 # Jellyfin Setup Commands:
 ```
-/jellyfinsettings setup <server url> <api key>
-This command is used to setup the Jellyfin server 
+/jellyfinsettings setup <server url> <api key> <optional: external server url (default: server url)>
+This command is used to setup the Jellyfin server. The external server URL is the URL that is sent to users to log into your Jellyfin server.
 /jellyfinsettings addrole <@role>
 These role(s) will be used as the role(s) to automatically invite user to Jellyfin
 /jellyfinsettings removerole <@role>
@@ -108,7 +106,10 @@ This command disables the Jellyfin integration (currently only disables auto-add
 ```
 
 # Migration from Invitarr
-Membarr uses a slightly different database table than Invitarr. To migrate users, you will need a sqlite database browser like DB Browser. Add a column to the sqlite table called "jellyfin_username", and make the "email" column nullable. Or, delete your existing app.db table and start fresh.
+Membarr uses a slightly different database table than Invitarr. Membarr will automatically update the Invitarr db table to the current Membarr table format, but the new table will no longer be compatible with Invitarr, so backup your app.db before running Membarr!
+
+# Migration to Invitarr
+As mentioned in [Migration from Invitarr](#Migration-From-Invitarr), Membarr has a slightly different db table than Invitarr. To Switch back to Invitarr, you will have to manually change the table format back. Open app.db in a sqlite cli tool or browser like DB Browser, then remove the "jellyfin_username" column, and make the "email" column non-nullable.
 
 # Other stuff
 **Enable Intents else bot will not Dm users after they get the role.**

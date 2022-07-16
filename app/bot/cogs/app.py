@@ -1,5 +1,6 @@
 from pickle import FALSE
 import app.bot.helper.jellyfinhelper as jelly
+from app.bot.helper.textformat import bcolors
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -27,7 +28,6 @@ try:
     PLEXPASS = config.get(BOT_SECTION, 'plex_pass')
     PLEX_SERVER_NAME = config.get(BOT_SECTION, 'plex_server_name')
 except:
-    print("Could not load plex config")
     plex_configured = False
 
 # Get Plex roles config
@@ -91,9 +91,12 @@ except:
     USE_PLEX = False
 
 try:
-    synced = not (float(config.get(BOT_SECTION, "sync_version")) < MEMBARR_VERSION)
+    JELLYFIN_EXTERNAL_URL = config.get(BOT_SECTION, "jellyfin_external_url")
+    if not JELLYFIN_EXTERNAL_URL:
+        JELLYFIN_EXTERNAL_URL = JELLYFIN_SERVER_URL
 except:
-    synced = False
+    JELLYFIN_EXTERNAL_URL = JELLYFIN_SERVER_URL
+    print("Could not get Jellyfin external url. Defaulting to server url.")
 
 if USE_PLEX and plex_configured:
     try:
@@ -120,9 +123,11 @@ class app(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Made by Yoruio https://github.com/Yoruio/')
-        print('Forked from Invitarr https://github.com/Sleepingpirates/Invitarr')
-        print('Named by lordfransie')
+        print('------')
+        print("{:^41}".format(f"MEMBARR V {MEMBARR_VERSION}"))
+        print(f'Made by Yoruio https://github.com/Yoruio/\n')
+        print(f'Forked from Invitarr https://github.com/Sleepingpirates/Invitarr')
+        print(f'Named by lordfransie')
         print(f'Logged in as {self.bot.user} (ID: {self.bot.user.id})')
         print('------')
 
@@ -299,7 +304,7 @@ class app(commands.Cog):
                                 db.save_user_jellyfin(str(after.id), username)
                                 await asyncio.sleep(5)
                                 await embedcustom(after, "You have been added to Jellyfin!", {'Username': username, 'Password': f"||{password}||"})
-                                await embedinfo(after, f"Go to {JELLYFIN_SERVER_URL} to log in!")
+                                await embedinfo(after, f"Go to {JELLYFIN_EXTERNAL_URL} to log in!")
                             else:
                                 await embedinfo(after, 'There was an error adding this user to Jellyfin. Message Server Admin.')
                         jellyfin_processed = True
