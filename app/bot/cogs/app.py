@@ -90,6 +90,14 @@ try:
 except:
     USE_PLEX = False
 
+try:
+    JELLYFIN_EXTERNAL_URL = config.get(BOT_SECTION, "jellyfin_external_url")
+    if not JELLYFIN_EXTERNAL_URL:
+        JELLYFIN_EXTERNAL_URL = JELLYFIN_SERVER_URL
+except:
+    JELLYFIN_EXTERNAL_URL = JELLYFIN_SERVER_URL
+    print("Could not get Jellyfin external url. Defaulting to server url.")
+
 if USE_PLEX and plex_configured:
     try:
         print("Connecting to Plex......")
@@ -296,7 +304,7 @@ class app(commands.Cog):
                                 db.save_user_jellyfin(str(after.id), username)
                                 await asyncio.sleep(5)
                                 await embedcustom(after, "You have been added to Jellyfin!", {'Username': username, 'Password': f"||{password}||"})
-                                await embedinfo(after, f"Go to {JELLYFIN_SERVER_URL} to log in!")
+                                await embedinfo(after, f"Go to {JELLYFIN_EXTERNAL_URL} to log in!")
                             else:
                                 await embedinfo(after, 'There was an error adding this user to Jellyfin. Message Server Admin.')
                         jellyfin_processed = True

@@ -12,7 +12,7 @@ config = configparser.ConfigParser()
 CONFIG_KEYS = ['username', 'password', 'discord_bot_token', 'plex_user', 'plex_pass',
                 'plex_roles', 'plex_server_name', 'plex_libs', 'owner_id', 'channel_id',
                 'auto_remove_user', 'jellyfin_api_key', 'jellyfin_server_url', 'jellyfin_roles',
-                'jellyfin_libs', 'plex_enabled', 'jellyfin_enabled']
+                'jellyfin_libs', 'plex_enabled', 'jellyfin_enabled', 'jellyfin_external_url']
 
 # settings
 Discord_bot_token = ""
@@ -95,6 +95,14 @@ try:
 except:
     print("Could not load Jellyfin config")
     jellyfin_configured = False
+
+try:
+    JELLYFIN_EXTERNAL_URL = config.get(BOT_SECTION, "jellyfin_external_url")
+    if not JELLYFIN_EXTERNAL_URL:
+        JELLYFIN_EXTERNAL_URL = JELLYFIN_SERVER_URL
+except:
+    JELLYFIN_EXTERNAL_URL = JELLYFIN_SERVER_URL
+    print("Could not get Jellyfin external url. Defaulting to server url.")
 
 # Get Jellyfin roles config
 try:

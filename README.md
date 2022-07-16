@@ -91,8 +91,8 @@ This command disables the Plex integration (currently only disables auto-add / a
 
 # Jellyfin Setup Commands:
 ```
-/jellyfinsettings setup <server url> <api key>
-This command is used to setup the Jellyfin server 
+/jellyfinsettings setup <server url> <api key> <optional: external server url (default: server url)>
+This command is used to setup the Jellyfin server. The external server URL is the URL that is sent to users to log into your Jellyfin server.
 /jellyfinsettings addrole <@role>
 These role(s) will be used as the role(s) to automatically invite user to Jellyfin
 /jellyfinsettings removerole <@role>
