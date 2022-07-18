@@ -38,12 +38,11 @@ This command is used to remove a record from the Db. Use /membarr dbls to determ
 > For Manual an Docker setup, see below
 
 1. Ensure you have the Community Applications plugin installed.
-2. Inside the Community Applications app store, search for Invitarr.
+2. Inside the Community Applications app store, search for Membarr.
 3. Click the Install Button.
-4. On the following Add Container screen, Change repository to yoruio/invitarr:latest
-5. Add discord bot token.
-6. Click apply
-7. Finish setting up using [Setup Commands](#after-bot-has-started)
+4. Add discord bot token.
+5. Click apply
+6. Finish setting up using [Setup Commands](#after-bot-has-started)
 
 # Manual Setup (For Docker, see below)
 
