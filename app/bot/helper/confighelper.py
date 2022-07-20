@@ -9,8 +9,8 @@ MEMBARR_VERSION = 1.1
 
 config = configparser.ConfigParser()
 
-CONFIG_KEYS = ['username', 'password', 'discord_bot_token', 'plex_user', 'plex_pass',
-                'plex_roles', 'plex_server_name', 'plex_libs', 'owner_id', 'channel_id',
+CONFIG_KEYS = ['username', 'password', 'discord_bot_token', 'plex_user', 'plex_pass', 'plex_token',
+                'plex_base_url', 'plex_roles', 'plex_server_name', 'plex_libs', 'owner_id', 'channel_id',
                 'auto_remove_user', 'jellyfin_api_key', 'jellyfin_server_url', 'jellyfin_roles',
                 'jellyfin_libs', 'plex_enabled', 'jellyfin_enabled', 'jellyfin_external_url']
 
@@ -20,6 +20,8 @@ plex_roles = None
 PLEXUSER = ""
 PLEXPASS = ""
 PLEX_SERVER_NAME = ""
+PLEX_TOKEN = ""
+PLEX_BASE_URL = ""
 Plex_LIBS = None
 JELLYFIN_SERVER_URL = ""
 JELLYFIN_API_KEY = ""
@@ -57,14 +59,24 @@ if not (path.exists(CONFIG_PATH)):
 config = configparser.ConfigParser()
 config.read(CONFIG_PATH)
 
+plex_token_configured = True
+try:
+    PLEX_TOKEN = config.get(BOT_SECTION, 'plex_token')
+    PLEX_BASE_URL = config.get(BOT_SECTION, 'plex_base_url')
+except:
+    print("No Plex auth token details found")
+    plex_token_configured = False
+
 # Get Plex config
 try:
     PLEXUSER = config.get(BOT_SECTION, 'plex_user')
     PLEXPASS = config.get(BOT_SECTION, 'plex_pass')
     PLEX_SERVER_NAME = config.get(BOT_SECTION, 'plex_server_name')
 except:
-    print("Could not load plex config")
-    plex_configured = False
+    print("No Plex login info found")
+    if not plex_token_configured:
+        print("Could not load plex config")
+        plex_configured = False
 
 # Get Plex roles config
 try:
