@@ -12,6 +12,7 @@ import app.bot.helper.confighelper as confighelper
 import app.bot.helper.jellyfinhelper as jelly
 from app.bot.helper.message import *
 from requests import ConnectTimeout
+from plexapi.myplex import MyPlexAccount
 
 maxroles = 10
 
@@ -104,13 +105,42 @@ async def plexrolels(interaction: discord.Interaction):
 
 @plex_commands.command(name="setup", description="Setup Plex integration")
 @app_commands.checks.has_permissions(administrator=True)
-async def setupplex(interaction: discord.Interaction, username: str, password: str, server_name: str):
-    confighelper.change_config("plex_user", str(username))
-    confighelper.change_config("plex_pass", str(password))
-    confighelper.change_config("plex_server_name", str(server_name))
-    print("Plex username, password, and plex server name updated. Restarting bot.")
-    await interaction.response.send_message(
-        "Plex username, password, and plex server name updated. Restarting bot. Please wait.\n" +
+async def setupplex(interaction: discord.Interaction, username: str, password: str, server_name: str, base_url: str = "", save_token: bool = True):
+    await interaction.response.defer()
+    try:
+        account = MyPlexAccount(username, password)
+        plex = account.resource(server_name).connect()
+    except Exception as e:
+        if str(e).startswith("(429)"):
+            await embederror(interaction.followup, "Too many requests. Please try again later.")
+            return
+        
+        await embederror(interaction.followup, "Could not connect to Plex server. Please check your credentials.")
+        return
+    
+    if (save_token):        
+        # Save new config entries
+        confighelper.change_config("plex_base_url", plex._baseurl if base_url == "" else base_url)
+        confighelper.change_config("plex_token", plex._token)
+
+        # Delete old config entries
+        confighelper.change_config("plex_user", "")
+        confighelper.change_config("plex_pass", "")
+        confighelper.change_config("plex_server_name", "")
+    else:
+        # Save new config entries
+        confighelper.change_config("plex_user", username)
+        confighelper.change_config("plex_pass", password)
+        confighelper.change_config("plex_server_name", server_name)
+
+        # Delete old config entries
+        confighelper.change_config("plex_base_url", "")
+        confighelper.change_config("plex_token", "")
+
+
+    print("Plex authentication details updated. Restarting bot.")
+    await interaction.followup.send(
+        "Plex authentication details updated. Restarting bot. Please wait.\n" +
         "Please check logs and make sure you see the line: `Logged into plex`. If not run this command again and make sure you enter the right values.",
         ephemeral=True
     )
