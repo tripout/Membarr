@@ -9,12 +9,6 @@ on:
     branches: [ "master" ]
     paths:
       - 'README.md'
-  pull_request:
-    types:
-      - closed
-    paths:
-      - 'README.md'
-    branches: [ "master" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
