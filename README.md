@@ -110,6 +110,9 @@ Membarr uses a slightly different database table than Invitarr. Membarr will aut
 # Migration to Invitarr
 As mentioned in [Migration from Invitarr](#Migration-From-Invitarr), Membarr has a slightly different db table than Invitarr. To Switch back to Invitarr, you will have to manually change the table format back. Open app.db in a sqlite cli tool or browser like DB Browser, then remove the "jellyfin_username" column, and make the "email" column non-nullable.
 
+# Contributing
+We appreciate any and all contributions made to the project, whether that be new features, bugfixes, or even fixed typos! If you would like to contribute to the project, simply fork the development branch, make your changes, and open a pull request. *Pull requests that are not based on the development branch will be rejected.*
+
 # Other stuff
 **Enable Intents else bot will not Dm users after they get the role.**
 https://discordpy.readthedocs.io/en/latest/intents.html#privileged-intents
