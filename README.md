@@ -105,6 +105,8 @@ This command disables the Jellyfin integration (currently only disables auto-add
 ```
 
 # Migration from Invitarr
+Invitarr does not require the applications.commands scope, so you will need to kick and reinvite your Discord bot to your server, making sure to tick both the "bot" and "applications.commands" scopes in the Oauth URL generator.
+
 Membarr uses a slightly different database table than Invitarr. Membarr will automatically update the Invitarr db table to the current Membarr table format, but the new table will no longer be compatible with Invitarr, so backup your app.db before running Membarr!
 
 # Migration to Invitarr
