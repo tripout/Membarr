@@ -6,6 +6,7 @@ from discord.ext import commands
 from discord import app_commands
 import asyncio
 from plexapi.myplex import MyPlexAccount
+from plexapi.server import PlexServer
 import app.bot.helper.db as db
 import app.bot.helper.plexhelper as plexhelper
 import app.bot.helper.jellyfinhelper as jelly
@@ -22,13 +23,24 @@ jellyfin_configured = True
 config = configparser.ConfigParser()
 config.read(CONFIG_PATH)
 
+plex_token_configured = True
+try:
+    PLEX_TOKEN = config.get(BOT_SECTION, 'plex_token')
+    PLEX_BASE_URL = config.get(BOT_SECTION, 'plex_base_url')
+except:
+    print("No Plex auth token details found")
+    plex_token_configured = False
+
 # Get Plex config
 try:
     PLEXUSER = config.get(BOT_SECTION, 'plex_user')
     PLEXPASS = config.get(BOT_SECTION, 'plex_pass')
     PLEX_SERVER_NAME = config.get(BOT_SECTION, 'plex_server_name')
 except:
-    plex_configured = False
+    print("No Plex login info found")
+    if not plex_token_configured:
+        print("Could not load plex config")
+        plex_configured = False
 
 # Get Plex roles config
 try:
@@ -101,12 +113,17 @@ except:
 if USE_PLEX and plex_configured:
     try:
         print("Connecting to Plex......")
-        account = MyPlexAccount(PLEXUSER, PLEXPASS)
-        plex = account.resource(PLEX_SERVER_NAME).connect()  # returns a PlexServer instance
+        if plex_token_configured and PLEX_TOKEN and PLEX_BASE_URL:
+            print("Using Plex auth token")
+            plex = PlexServer(PLEX_BASE_URL, PLEX_TOKEN)
+        else:
+            print("Using Plex login info")
+            account = MyPlexAccount(PLEXUSER, PLEXPASS)
+            plex = account.resource(PLEX_SERVER_NAME).connect()  # returns a PlexServer instance
         print('Logged into plex!')
     except Exception as e:
         # probably rate limited.
-        print('Error with plex login. Please check username and password and Plex server name or setup plex in the bot. If you have restarted the bot multiple times recently, this is most likely due to being ratelimited on the Plex API. Try again in 10 minutes.')
+        print('Error with plex login. Please check Plex authentication details. If you have restarted the bot multiple times recently, this is most likely due to being ratelimited on the Plex API. Try again in 10 minutes.')
         print(f'Error: {e}')
 else:
     print(f"Plex {'disabled' if not USE_PLEX else 'not configured'}. Skipping Plex login.")
