@@ -59,14 +59,9 @@ python3 Run.py
 ```
 
 # Docker Setup & Start
-
-1. First pull the image 
+To run Membarr in Docker, run the following command, replacing [path to config] with the absolute path to your bot config folder:
 ```
-docker pull yoruio/invitarr:latest
-```
-2. Make the container 
-```
-docker run -d --restart unless-stopped --name invitarr -v /path to config:/app/app/config -e "token=YOUR_DISCORD_TOKEN_HERE" yoruio/invitarr:latest
+docker run -d --restart unless-stopped --name membarr -v /[path to config]:/app/app/config -e "token=YOUR_DISCORD_TOKEN_HERE" yoruio/membarr:latest
 ```
 
 # After bot has started 
