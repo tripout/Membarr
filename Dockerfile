@@ -8,9 +8,6 @@ RUN \
 RUN \
     apk --no-cache add -q git cloc openssl openssl-dev openssh alpine-sdk bash gettext sudo build-base gnupg linux-headers xz
 
-# install discord.py - this done outside of requirements.txt to lower build times  
-RUN pip3 install git+https://github.com/Rapptz/discord.py@e0341c9#egg=discord.py
-
 WORKDIR /app
 COPY . .
 RUN pip install -Ur requirements.txt
